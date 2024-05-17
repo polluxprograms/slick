@@ -2,9 +2,11 @@ local math = require('math')
 local gears = require('gears')
 
 local default_args = {
-  snap = 0.1,
   refresh_rate = 144,
-  speed = 20
+  speed = 20,
+  stop = function(value, target)
+    return (math.abs(value - target) < 0.1)
+  end
 }
 
 local set = function (self, target)
@@ -17,7 +19,7 @@ local update = function (self)
     (self.target - self.value) *
     (1 - math.exp(-self.args.speed / self.args.refresh_rate))
 
-  if math.abs(self.value - self.target) < self.args.snap then
+  if self.args.stop(self.value, self.target) then
     self.value = self.target
     self.timer:stop()
   end
@@ -26,7 +28,7 @@ local update = function (self)
 end
 
 local new = function (value, args)
-  args = gears.table.crush(default_args, args)
+  args = gears.table.crush(gears.table.clone(default_args), args)
 
   local ret = {
     value = value,
