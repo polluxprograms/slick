@@ -5,7 +5,7 @@ local default_args = {
   refresh_rate = 144,
   speed = 20,
   stop = function(value, target)
-    return (math.abs(value - target) < 0.1)
+    return (math.abs(value - target) < 0.2)
   end
 }
 
@@ -13,6 +13,8 @@ local set = function (self, target)
   self.target = target
   self.timer:start()
 end
+
+local get = function (self) return self.target end
 
 local update = function (self)
   self.value = self.value +
@@ -35,6 +37,7 @@ local new = function (value, args)
     target = value,
     args = args,
     set = set,
+    get = get,
     update = update
   }
 
